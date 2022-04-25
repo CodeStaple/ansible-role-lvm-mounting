@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: pre-longhorn
+  role_name: ansible-role-lvm-mount
   author: CodeStaple
   description: This Ansible Role will create an LVM to the default storage of Longhorn on the host.
   company: Seferon
