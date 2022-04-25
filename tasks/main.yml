@@ -1,5 +1,5 @@
 ---
-- name: Create a new primary partition 
+- name: "Create a new primary partition {{ lvm_device_id }}"
   community.general.parted:
     device: "{{ lvm_device_id }}"
     number: "{{ partition_id }}"
@@ -9,7 +9,7 @@
 - name: Creating volume group
   lvg:
       vg: "{{ virtual_group }}"
-      pvs: "{{ lvm_device_id }}{{partition_id}}"
+      pvs: "{{ lvm_device_id }}{{ partition_id }}"
 
 - name: Install lvm2 dependency
   package:
@@ -33,7 +33,7 @@
 - name: format the filesystem
   filesystem:
     fstype: "{{ fs_type }}"
-    dev: /dev/longhorn-vg/longhorn-lv
+    dev: "/dev/{{ virtual_group }}/{{ logical_volume }}"
   when: "{{ mount }}"
 
 - name: "mount the lv on {{ mount_dir }}"
