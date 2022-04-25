@@ -1,0 +1,45 @@
+---
+- name: Create a new primary partition 
+  community.general.parted:
+    device: "{{ lvm_device_id }}"
+    number: "{{ partition_id }}"
+    flags: [ lvm ]
+    state: present
+
+- name: Creating volume group
+  lvg:
+      vg: "{{ virtual_group }}"
+      pvs: "{{ lvm_device_id }}{{partition_id}}"
+
+- name: Install lvm2 dependency
+  package:
+    name: lvm2
+    state: present
+
+- name: Creating logical volume (longhorn-lv)
+  lvol:
+      vg: "{{ virtual_group }}"
+      lv:  "{{ logical_volume }}"
+      size: "{{ lv_size }}"
+      force: yes
+
+- name: "Create directory {{ mount_dir }} if does not exist"
+  file:
+    path: "{{ mount_dir }}"
+    state: directory
+    mode: '0755'
+    when: "{{ mount }}"
+
+- name: format the filesystem
+  filesystem:
+    fstype: "{{ fs_type }}"
+    dev: /dev/longhorn-vg/longhorn-lv
+  when: "{{ mount }}"
+
+- name: "mount the lv on {{ mount_dir }}"
+  mount:
+    path: "{{ mount_dir }}"
+    src: "/dev/{{ virtual_group }}/{{ logical_volume }}"
+    fstype: "{{ fs_type }}"
+    state: mounted
+  when: "{{ mount }}"

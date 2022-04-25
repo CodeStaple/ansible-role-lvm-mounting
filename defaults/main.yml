@@ -1,0 +1,15 @@
+lvm_device_id: /dev/sdc
+
+partition_id: 1
+
+virtual_group: "longhorn-vg"
+
+logical_volume: "longhorn-lv"
+
+lv_size: "100%FREE"
+
+fs_type: "ext4"
+
+mount: true
+
+mount_dir: "/var/lib/longhorn"
